@@ -1,5 +1,10 @@
 package org.insset.shared;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.regex.Pattern;
+
 /**
  * <p>
  * FieldVerifier validates that the name the user enters is valid.
@@ -22,6 +27,7 @@ package org.insset.shared;
  */
 public class FieldVerifier {
 
+     private static Pattern regex = Pattern.compile("M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})");
     /**
      * Verifies that the specified name is valid for our service.
      *
@@ -51,18 +57,104 @@ public class FieldVerifier {
      * @param name the name to validate
      * @return true if valid, false if invalid
      */
+    
+    public static boolean VerifValueMin(int val)
+    {
+        boolean res = true;
+        if(val < 0)
+            res = false;
+            
+            return res;
+            
+    }
+    
+    
+
+    public static boolean VerifValueMax( int val )
+    {
+         boolean res = true;
+        if(val > 2000)
+            res = false;
+            
+            return res;
+    }
     public static boolean isValidDecimal(Integer nbr) {
         //Implement your code
+        
+         try { 
+         Integer.parseInt(nbr.toString()); 
+         if(!VerifValueMax(nbr) || !VerifValueMin(nbr))
+            return false;        
+         else
         return true;
+        
+    } catch(NumberFormatException e) { 
+        return false; 
+    } catch(NullPointerException e) {
+        return false;
     }
 
-    public static boolean isValidRoman(String nbr) {
+       
+    }
+
+    /**
+	 * Test whether the input string is a valid roman numeral (between 1 and 4999).
+	 */
+	public static boolean isRoman(String s) {
+		return s!=null && !"".equals(s) && regex.matcher(s.toUpperCase()).matches();
+	}
+
+    public  static boolean isValidRoman(String nbr) {
         //Implement your code
-        return true;
+        boolean breturn =false;
+       
+               if (isRoman(nbr)) {
+			breturn = true;
+		}
+		else
+               {
+	         throw new RuntimeException("\""+nbr+"\" is not a valid roman numeral.");
+                 
+                 
+               }
+
+               return breturn;
+       
     }
 
     public static boolean isValidDate(String date) {
         //Implement your code
+        
+         /* Check if date is 'null' */
+    if (date.trim().equals(""))
+    {
         return true;
+    }
+    /* Date is not 'null' */
+    else
+    {
+        /*
+         * Set preferred date format,
+         * For example MM-dd-yyyy, MM.dd.yyyy,dd.MM.yyyy etc.*/
+        SimpleDateFormat sdfrmt = new SimpleDateFormat("MM/dd/yyyy");
+        sdfrmt.setLenient(false);
+        /* Create Date object */
+        Date javaDate = null;
+        /* parse the string into date form */
+        try
+        {
+            javaDate = sdfrmt.parse(date); 
+            System.out.println("Date after validation: " + javaDate);
+        }
+        /* Date format is invalid */
+        catch (ParseException  e)
+        {
+            System.out.println("The date you provided is in an " +"invalid date format.");
+            return false;
+        }
+        /* Return 'true' - since date is in valid format */
+        return true;
+    }
+       
     }
 }
