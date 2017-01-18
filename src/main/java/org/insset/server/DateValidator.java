@@ -5,33 +5,34 @@
  */
 package org.insset.server;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-import org.insset.client.service.RomanConverterService;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-/**
- *
- * @author user
- */
-@SuppressWarnings("serial")
-public class RomanConverterServiceImpl extends RemoteServiceServlet implements
-        RomanConverterService {
+public class DateValidator {
 
-    @Override
-    public String convertDateYears(String nbr) throws IllegalArgumentException {
-        //Implement your code
-        return "XV/III/MX";
-    }
+	public boolean isThisDateValid(String dateToValidate, String dateFromat){
 
-    @Override
-    public Integer convertRomanToArabe(String nbr) throws IllegalArgumentException {
-        //Implement your code
-        return 3;
-    }
+		if(dateToValidate == null){
+			return false;
+		}
 
-    @Override
-    public String convertArabeToRoman(Integer nbr) throws IllegalArgumentException {
-        //Implement your code
-        return new String("XVXX");
-    }
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFromat);
+		sdf.setLenient(false);
+
+		try {
+
+			//if not valid, it will throw ParseException
+			Date date = sdf.parse(dateToValidate);
+			System.out.println(date);
+
+		} catch (ParseException e) {
+
+			e.printStackTrace();
+			return false;
+		}
+
+		return true;
+	}
 
 }

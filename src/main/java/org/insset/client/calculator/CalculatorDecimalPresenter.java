@@ -16,6 +16,10 @@ import org.insset.client.message.dialogbox.DialogBoxInssetPresenter;
 import org.insset.client.service.RomanConverterService;
 import org.insset.client.service.RomanConverterServiceAsync;
 import org.insset.shared.FieldVerifier;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -119,12 +123,18 @@ public class CalculatorDecimalPresenter extends Composite {
         });
     }
 
+    
+    
+   
+
     /**
      * call server
      */
     private void convertRomanToArabe() {
         if (!FieldVerifier.isValidRoman(valR.getText())) {
-            errorLabelRToA.addStyleName("serverResponseLabelError");
+            
+            
+                  errorLabelRToA.addStyleName("serverResponseLabelError");
             errorLabelRToA.setText("Format incorect");
             return;
         }
@@ -143,12 +153,58 @@ public class CalculatorDecimalPresenter extends Composite {
     /**
      * call server
      */
+    
+    
+        // test fonction verif minimum value 
+    public static boolean VerifValueMin(int val)
+    {
+        boolean res = true;
+        if(val < 0)
+            res = false;
+            
+            return res;
+            
+    }
+    
+    
+
+    public static boolean VerifValueMax( int val )
+    {
+         boolean res = true;
+        if(val > 2000)
+            res = false;
+            
+            return res;
+    }
     private void convertArabeToRoman() {
-        if (!FieldVerifier.isValidRoman(valA.getText())) {
+         
+        try{
+        Integer.parseInt(valA.getText()); 
+        if(!VerifValueMax(Integer.parseInt(valA.getText())) || !VerifValueMin(Integer.parseInt(valA.getText())))
+        {
+            errorLabelAToR.addStyleName("serverResponseLabelError");
+            errorLabelAToR.setText("la valeur doit etre comprise entr 0 et 2000 ");
+  
+            return;
+        }
+         } catch(NumberFormatException e) { 
+             errorLabelAToR.addStyleName("serverResponseLabelError");
+            errorLabelAToR.setText("Format incorect");
+  
+        return ; 
+    } catch(NullPointerException e) {
+        errorLabelAToR.addStyleName("serverResponseLabelError");
+            errorLabelAToR.setText("Format incorect");
+  
+        return ;
+    
+        }
+      /*  if (!FieldVerifier.isValidDecimal(Integer.parseInt(valA.getText()))) {
+            
             errorLabelAToR.addStyleName("serverResponseLabelError");
             errorLabelAToR.setText("Format incorect");
             return;
-        }
+        }*/
         service.convertArabeToRoman(Integer.parseInt(valA.getText()), new AsyncCallback<String>() {
             public void onFailure(Throwable caught) {
                 // Show the RPC error message to the user
@@ -166,11 +222,47 @@ public class CalculatorDecimalPresenter extends Composite {
      */
     private void convertDate() {
         //Verif
-        if (!FieldVerifier.isValidDate(valD.getText())) {
+        
+        
+           
+         /* Check if date is 'null' */
+    if (valD.getText().trim().equals(""))
+    {
+         errorLabelAToR.addStyleName("serverResponseLabelError");
+            errorLabelAToR.setText("Veuillez renseigner une Date");
+        return ;
+    }
+      else
+    {
+        /*
+         * Set preferred date format,
+         * For example MM-dd-yyyy, MM.dd.yyyy,dd.MM.yyyy etc.*/
+        SimpleDateFormat sdfrmt = new SimpleDateFormat("MM/dd/yyyy");
+        sdfrmt.setLenient(false);
+        /* Create Date object */
+        Date javaDate = null;
+        /* parse the string into date form */
+        try
+        {
+            javaDate = sdfrmt.parse(valD.getText()); 
+          
+        }
+        /* Date format is invalid */
+        catch (ParseException  e)
+        {
+             errorLabelAToR.addStyleName("serverResponseLabelError");
+            errorLabelAToR.setText("Format incorect");
+            return ;
+        }
+    }
+        /* Return 'true' - since date is in valid format */
+   
+    
+      /*  if (!FieldVerifier.isValidDate(valD.getText())) {
             errorLabelAToR.addStyleName("serverResponseLabelError");
             errorLabelAToR.setText("Format incorect");
             return;
-        }
+        }*/
         //call server
         service.convertDateYears(valD.getText(), new AsyncCallback<String>() {
             public void onFailure(Throwable caught) {
